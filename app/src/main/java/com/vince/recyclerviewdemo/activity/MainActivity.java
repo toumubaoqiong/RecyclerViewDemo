@@ -2,6 +2,7 @@ package com.vince.recyclerviewdemo.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
@@ -21,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- *description: 实现gridView、listView、HorizontalGridView；动态添加删除动画；onClick监听
+ *description: 实现gridView、listView、HorizontalGridView；动态添加删除动画；onClick监听；SwipeRefreshLayout下拉刷新
  *author:vince
  *creator at:2016/8/11
  */
@@ -30,6 +31,7 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView mRecyclerView;
     private List<String> mDatas;
     private SimpleAdapter mAdapter;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +45,19 @@ public class MainActivity extends AppCompatActivity {
 
     private void initView() {
         mRecyclerView = (RecyclerView)findViewById(R.id.RecyclerView_show);
+        mSwipeRefreshLayout = (SwipeRefreshLayout)findViewById(R.id.SwipeRefreshLayout_refresh_layout);
+        if(mSwipeRefreshLayout != null){
+            //改变加载图标的颜色
+            mSwipeRefreshLayout.setColorSchemeResources(R.color.orange, R.color.green, R.color.blue);
+        }
+        //设置下拉刷新回调
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                //下拉刷新回调
+                mSwipeRefreshLayout.setRefreshing(false);
+            }
+        });
         mAdapter = new SimpleAdapter(this,mDatas);
 
         mAdapter.setOnItemClickListener(new SimpleAdapter.OnItemClickListener() {
