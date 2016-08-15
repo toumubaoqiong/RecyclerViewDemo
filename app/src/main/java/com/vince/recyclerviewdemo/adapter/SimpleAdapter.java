@@ -16,7 +16,7 @@ import java.util.List;
  * author ： zhua
  * Created at 2016/8/11.
  */
-public class SimpleAdapter extends RecyclerView.Adapter<SimpleAdapter.ItemViewHolder> {
+public class SimpleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private static final String TAG = "SimpleAdapter";
 
@@ -25,10 +25,23 @@ public class SimpleAdapter extends RecyclerView.Adapter<SimpleAdapter.ItemViewHo
     private List<String> mData;
     private OnItemClickListener mOnItemClickListener;
 
+    private static final int TYPE_ITEM = 0;
+    private static final int TYPE_FOOTER = 1;
+
     public interface OnItemClickListener {
         void onItemClick(View view, int postion);
 
         void onItemLongClick(View view, int postion);
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        // 最后一个item设置为footerView
+        if (position + 1 == getItemCount()) {
+            return TYPE_FOOTER;
+        } else {
+            return TYPE_ITEM;
+        }
     }
 
     public void setOnItemClickListener(OnItemClickListener listener) {
@@ -42,10 +55,16 @@ public class SimpleAdapter extends RecyclerView.Adapter<SimpleAdapter.ItemViewHo
     }
 
     @Override
-    public ItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View v = mInflater.inflate(R.layout.item_single_textview, parent, false);
-        ItemViewHolder viewHolder = new ItemViewHolder(v);
-        return viewHolder;
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        if (viewType == TYPE_ITEM) {
+            View v = mInflater.inflate(R.layout.item_single_textview, parent, false);
+            return new ItemViewHolder(v);
+        }else if(viewType == TYPE_FOOTER){
+            View view = mInflater.inflate(R.layout.footerview, parent,false);
+            return new FooterViewHolder(view);
+        }
+
+        return null;
     }
 
     public void addData(int pos) {
@@ -59,8 +78,12 @@ public class SimpleAdapter extends RecyclerView.Adapter<SimpleAdapter.ItemViewHo
     }
 
     @Override
-    public void onBindViewHolder(final ItemViewHolder holder, final int position) {
-        holder.tv.setText(mData.get(position));
+    public void onBindViewHolder(final RecyclerView.ViewHolder holder, final int position) {
+
+        if(!(holder instanceof ItemViewHolder)){
+            return ;
+        }
+        ((ItemViewHolder)holder).tv.setText(mData.get(position));
 
         if (!holder.itemView.hasOnClickListeners()) {//加入判断之后只需要调用一次即可
             if (mOnItemClickListener != null) {
@@ -99,6 +122,13 @@ public class SimpleAdapter extends RecyclerView.Adapter<SimpleAdapter.ItemViewHo
             super(itemView);
 
             tv = (TextView) itemView.findViewById(R.id.TextView_tv);
+        }
+    }
+
+    public class FooterViewHolder extends RecyclerView.ViewHolder {
+
+        public FooterViewHolder(View itemView) {
+            super(itemView);
         }
     }
 }

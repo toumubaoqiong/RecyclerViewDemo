@@ -117,6 +117,7 @@ public class MainActivity extends AppCompatActivity {
                 mAdapter.deleteData(1);
                 break;
             case R.id.action_setting:
+                Toast.makeText(MainActivity.this,"该功能暂时未开放",Toast.LENGTH_LONG).show();
                 break;
             default:
                 break;
